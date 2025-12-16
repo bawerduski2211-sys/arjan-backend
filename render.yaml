@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: arjan-ai-server-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: free
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false

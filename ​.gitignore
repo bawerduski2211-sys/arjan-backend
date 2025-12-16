@@ -1,0 +1,5 @@
+# ل ڤێرە لیستەیا ئەو فایلان هەیە کو نابیت بچنە سەر GitHub
+node_modules/
+.env
+.DS_Store
+*.log
