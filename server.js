@@ -16,11 +16,11 @@ app.post('/api/chat', async (req, res) => {
       messages: [{ role: 'user', content: message }],
       model: 'llama3-8b-8192',
     });
-    res.json({ response: [0].message.content });
+    res.json({ response: chatCompletion.choices[0].message.content });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running`))
+app.listen(PORT, () => console.log(`Server running`));
