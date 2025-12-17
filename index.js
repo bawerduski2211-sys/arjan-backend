@@ -15,7 +15,7 @@ app.get('/api', (req, res) => {
   res.send('ARJAN AI Server is Running! 💎');
 });
 
-// پرۆسەکرنا نامەیان ب شێوەزارێ بادینی
+// پرۆسەکرنا نامەیان ب شێوەزارێ بادینی یێ دهۆکێ
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
