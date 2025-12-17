@@ -1,35 +1,26 @@
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// گرێدان ب کلیلا تە یا گوگل کو د فایلێ .env دا جێگیرە
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-app.post('/api/generate', async (req, res) => {
-    try {
-        const { prompt } = req.body;
-        
-        // بکارئینانا مۆدێلێ Gemini 1.5 Flash
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-        
-        res.json({ result: text });
-    } catch (error) {
-        console.error("Error:", error.message);
-        res.status(500).json({ error: "ئاریشەیەک د سێرڤەری دا هەیە" });
-    }
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [{ role: 'user', content: message }],
+      model: 'llama3-8b-8192',
+    });
+    res.json({ response: chatCompletion.choices[0].message.content });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// ڕێکخستنا پۆرتێ سێرڤەری بۆ Render
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`💎 Diamond Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running`));
