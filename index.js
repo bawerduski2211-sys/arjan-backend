@@ -36,4 +36,4 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // ڕێکخستنا Vercel
-module.exports = a
+module.exports = app;
