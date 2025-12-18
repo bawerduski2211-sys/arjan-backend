@@ -1,16 +1,18 @@
 {
   "name": "arjan-backend",
   "version": "1.0.0",
-  "description": "Arjan AI Global Professor Brain",
-  "main": "index.js",
+  "description": "AI Brain for Arjan AI Project",
+  "main": "api/chat.js",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node api/chat.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.1.0",
     "express": "^4.18.2",
-    "cors": "^2.8.5"
-  },
-  "engines": {
-    "node": "18.x"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3"
   }
 }
