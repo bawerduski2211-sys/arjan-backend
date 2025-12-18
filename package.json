@@ -1,6 +1,7 @@
 {
-  "name": "arjan-ai-server-backend",
+  "name": "arjan-backend",
   "version": "1.0.0",
+  "description": "Arjan AI Global Professor Brain",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
