@@ -1,11 +1,9 @@
 {
   "name": "arjan-ai-server-backend",
   "version": "1.0.0",
-  "description": "Arjan AI Global Professor Brain",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
