@@ -15,17 +15,20 @@ app.post('/api/chat', async (req, res) => {
     if (!message) return res.status(400).json({ reply: "برا پسیارەکێ بنڤێسە!" });
 
     try {
-        // گوهۆڕینا ناڤی بۆ gemini-pro دا کو شاشیا 404 چارەسەر ببیت
+        // بکارئینانا gemini-pro کو جێگیرترین مۆدێلە
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         const prompt = `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە. پسیار: ${message}`;
 
+        // وەرگرتنا وەڵامێ ب ڕێکا await
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        res.json({ reply: response.text() });
+        const text = await response.text(); // ئەڤە خاڵا سەرەکییە بۆ نەهێلانا کێشەیان
+
+        res.json({ reply: text });
 
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error details:", error);
         res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە تووشی کێشەیەکێ بوو." });
     }
 });
