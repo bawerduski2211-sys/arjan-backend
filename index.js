@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// چالاککرنا مێشکێ Gemini
+// چالاککرنا مێشکێ Gemini ب کلیلێ تە
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 app.post('/api/chat', async (req, res) => {
@@ -15,14 +15,12 @@ app.post('/api/chat', async (req, res) => {
     if (!message) return res.status(400).json({ reply: "برا پسیارەکێ بنڤێسە!" });
 
     try {
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash",
-            systemInstruction: `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. 
-            تۆ دەتوانی بە هەموو زمانەکانی جیهان قسە بکەیت. 
-            ئەگەر بە کوردی (بادینی) قسەی کرد، بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە.`
-        });
+        // ب کارئینانا gemini-pro کو جێگیرترین مۆدێلە
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        const result = await model.generateContent(message);
+        const prompt = `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە. پسیار: ${message}`;
+
+        const result = await model.generateContent(prompt);
         const response = await result.response;
         res.json({ reply: response.text() });
 
