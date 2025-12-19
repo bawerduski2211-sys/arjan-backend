@@ -3,10 +3,10 @@ services:
     name: arjan-ai-server-backend
     env: node
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: node api/chat.js
     plan: free
     envVars:
-      - key: OPENAI_API_KEY
+      - key: GROQ_API_KEY
         sync: false
-      - key: GOOGLE_API_KEY
+      - key: MODEL_NAME
         sync: false
