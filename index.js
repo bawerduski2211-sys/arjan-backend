@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// چالاککرنا مێشکێ Gemini ب کلیلێ تە ژ Environment Variables
+// ڕێکخستنی کلیل و مۆدێل
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 app.post('/api/chat', async (req, res) => {
@@ -18,30 +18,30 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        // بکارئینانا مۆدێلا gemini-pro کو جێگیرترینە
+        // بەکارهێنانی gemini-pro کە زۆر جێگیرە
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         const prompt = `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە. پسیار: ${message}`;
 
+        // هەنگاوەکانی وەرگرتنی وەڵام بە شێوەی دروست
         const result = await model.generateContent(prompt);
         const response = await result.response;
         
-        // ئەڤە ئەو دێڕە بوو کو کێشە دروست دکر، نوکە مە await بۆ زێدە کر
+        // گرنگترین بەش: چاوەڕێکردن (await) بۆ وەرگرتنی دەقەکە
         const text = await response.text(); 
 
         res.json({ reply: text });
 
     } catch (error) {
-        // نیشاندانا جۆرێ کێشەیێ د لۆگان دا بۆ هندێ تو بزانی کێشە ل کوو بوو
-        console.error("Error Detail:", error);
+        console.error("Error Details:", error);
         res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە تووشی کێشەیەکێ بوو." });
     }
 });
 
-// ڕێڕەوێ سەرەکی دا کو شاشیا 404 ل لاپەڕێ دەسپێکێ نەمینیت
+// ڕێڕەوی سەرەکی بۆ چالاکبوونی سێرڤەر
 app.get('/', (req, res) => {
-    res.send("Arjan AI Server is Running!");
+    res.send("Arjan AI Server is Live and Running!");
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server is active on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
