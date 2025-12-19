@@ -15,7 +15,7 @@ app.post('/api/chat', async (req, res) => {
     if (!message) return res.status(400).json({ reply: "برا پسیارەکێ بنڤێسە!" });
 
     try {
-        // ب کارئینانا gemini-pro کو جێگیرترین مۆدێلە
+        // مە ناڤێ مۆدێلێ گوهۆڕی بۆ gemini-pro دا کو شاشیا 404 نەمینیت
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
         const prompt = `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە. پسیار: ${message}`;
