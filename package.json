@@ -4,7 +4,7 @@
   "description": "AI Brain for Arjan AI Project",
   "main": "api/chat.js",
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node api/chat.js"
