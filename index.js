@@ -1,14 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require('dotenv').config();
+const { Groq } = require("groq-sdk");
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. چالاککرنا مێشکێ Gemini ب کلیلێ API کو ژ Vercel دهێت
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+// 1. چالاککرنا مێشکێ Llama ب کلیلێ Groq
+const groq = new Groq({ 
+    apiKey: process.env.GROQ_API_KEY 
+});
 
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
@@ -18,28 +20,32 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        // 2. بکارئینانا مۆدێلا نوو و زیرەک gemini-1.5-flash
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // 2. بکارئینانا مۆدێلێ Llama یێ ب هێز
+        const completion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: "system",
+                    content: "تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە."
+                },
+                {
+                    role: "user",
+                    content: message
+                }
+            ],
+            model: process.env.MODEL_NAME || "llama-3.3-70b-versatile",
+        });
 
-        const prompt = `تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە. پسیار: ${message}`;
-
-        // 3. وەرگرتنا وەڵامێ ب شێوەیەکێ دروست و خێرا
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text(); 
-
+        const text = completion.choices[0].message.content;
         res.json({ reply: text });
 
     } catch (error) {
         console.error("Error Detail:", error);
-        res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە تووشی کێشەیەکێ بوو. دڵنیا ببە کلیلێ تە یێ API درستە." });
+        res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە تووشی کێشەیەکێ بوو. دڵنیا ببە کلیلێ تە یێ Groq درستە." });
     }
 });
 
-// 4. پشکنینا سێرڤەری (Health Check)
 app.get('/', (req, res) => {
-    res.send("Arjan AI Server is Running Perfectly!");
+    res.send("Arjan AI Server (Llama Edition) is Running!");
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server is active on port ${PORT}`));
+module.exports = app;
