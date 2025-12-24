@@ -1,18 +1,23 @@
+require('dotenv').config(); // بۆ خاندنا کلیلان ژ فایلێ .env
 const express = require('express');
+const fetch = require('node-fetch'); // دڵنیابە د package.json دا هەیە
 const app = express();
 const path = require('path');
 
 app.use(express.json());
+
 // نیشاندانا فایلێن ستاتیک (HTML, CSS, JS) ژ فۆڵدەرێ سەرەکی
 app.use(express.static(__dirname));
 
 // API Endpoint بۆ چاتێ
 app.post('/api/chat', async (req, res) => {
     const { prompt } = req.body;
-    
-    // وەرگرتنا کلیلان ژ Vercel Environment Variables
     const apiKey = process.env.OPENROUTER_API_KEY;
     const baseUrl = "https://openrouter.ai/api/v1/chat/completions";
+
+    if (!prompt) {
+        return res.status(400).json({ error: "تکایە پرسیارەکێ بنێرە" });
+    }
 
     try {
         const response = await fetch(baseUrl, {
@@ -22,10 +27,8 @@ app.post('/api/chat', async (req, res) => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "model": "google/gemini-2.0-flash-exp:free", // یان هەر مۆدێلەکێ تە بڤێت
-                "messages": [
-                    { "role": "user", "content": prompt }
-                ]
+                "model": "google/gemini-2.0-flash-exp:free",
+                "messages": [{ "role": "user", "content": prompt }]
             })
         });
 
@@ -37,6 +40,7 @@ app.post('/api/chat', async (req, res) => {
             res.status(500).json({ error: "بەرسڤ ژ AI نەهات" });
         }
     } catch (error) {
+        console.error("Error:", error);
         res.status(500).json({ error: "کێشەیەک د سێرڤەری دا هەیە" });
     }
 });
