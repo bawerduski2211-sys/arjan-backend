@@ -4,13 +4,10 @@
   "description": "AI Brain for Arjan AI Project",
   "main": "api/chat.js",
   "engines": {
-    "node": "24.x"
-  },
-  "scripts": {
-    "start": "node api/chat.js"
+    "node": "20.x"
   },
   "dependencies": {
-    "groq-sdk": "^0.9.0",
+    "@google/generative-ai": "^0.21.0",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3"
