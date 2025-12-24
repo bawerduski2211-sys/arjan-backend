@@ -1,22 +1,45 @@
-// --- Bawerduski Backend Core ---
-const supabaseUrl = 'https://cepuvipasminpjcpgvrq.supabase.co';
-const supabaseKey = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlcHV2aXBhc21pbnBqY3BndnJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4ODM1NDQsImV4cCI6MjA4MTQ1OTU0NH0.FcLh2LgcxHhdtZdqCIu3ImN7T_Xp8a8hXGCZHRhcWuE';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const express = require('express');
+const app = express();
+const path = require('path');
 
-// تومارکرنا هاکەران د داتابەیسێ دا
-async function logHackerToDatabase(email) {
-    await supabase.from('hack_logs').insert([{ 
-        hacker_email: email,
-        action_description: 'Hacker Detected - ARJAN Security System',
-        status: 'Blocked'
-    }]);
-    // برن بۆ لاپەڕێ بلۆککرنێ
-    window.location.href = "blocked.html"; 
-}
+app.use(express.json());
+// نیشاندانا فایلێن ستاتیک (HTML, CSS, JS) ژ فۆڵدەرێ سەرەکی
+app.use(express.static(__dirname));
 
-// وەرگرتنا نامەیێن بکارئینەران د داتابەیسێ دا
-async function processIncomingMessage(name, email, phone, message) {
-    await supabase.from('messages').insert([{ 
-        full_name: name, email: email, phone: phone, message_body: message 
-    }]);
-}
+// API Endpoint بۆ چاتێ
+app.post('/api/chat', async (req, res) => {
+    const { prompt } = req.body;
+    
+    // وەرگرتنا کلیلان ژ Vercel Environment Variables
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    const baseUrl = "https://openrouter.ai/api/v1/chat/completions";
+
+    try {
+        const response = await fetch(baseUrl, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "model": "google/gemini-2.0-flash-exp:free", // یان هەر مۆدێلەکێ تە بڤێت
+                "messages": [
+                    { "role": "user", "content": prompt }
+                ]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.choices && data.choices[0]) {
+            res.json({ text: data.choices[0].message.content });
+        } else {
+            res.status(500).json({ error: "بەرسڤ ژ AI نەهات" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: "کێشەیەک د سێرڤەری دا هەیە" });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
