@@ -1,4 +1,3 @@
-
 async function askAI() {
     const input = document.getElementById('user-input');
     const container = document.getElementById('chat-container');
@@ -6,13 +5,13 @@ async function askAI() {
 
     if (!text) return;
 
-    // پیشاندانی نامەی بەکارهێنەر
+    // نیشاندانا نامەیا تە
     container.innerHTML += `<div class="msg user-msg">${text}</div>`;
     input.value = "";
 
-    // دروستکردنی شوێنی بەرسڤی AI
+    // دروستکرنا جهێ بەرسڤێ
     const loadingId = "ai-" + Date.now();
-    container.innerHTML += `<div id="${loadingId}" class="msg ai-msg">پڕۆفیسۆر ئارجان بیر دەکاتەوە...</div>`;
+    container.innerHTML += `<div id="${loadingId}" class="msg ai-msg">پڕۆفیسۆر ئارجان یێ هزر دکەت...</div>`;
     container.scrollTop = container.scrollHeight;
 
     try {
@@ -23,11 +22,9 @@ async function askAI() {
         });
 
         const data = await res.json();
-        const aiRes = data.reply || "ببوورە بەرسڤ نەهات.";
-
-        document.getElementById(loadingId).innerText = aiRes;
+        document.getElementById(loadingId).innerText = data.reply || "بەرسڤ نەهات.";
     } catch (error) {
-        document.getElementById(loadingId).innerText = "کێشەیەک لە پەیوەندیدا هەیە.";
+        document.getElementById(loadingId).innerText = "کێشەیەک د پەیوەندیێ دا هەبوو.";
     }
     container.scrollTop = container.scrollHeight;
 }
