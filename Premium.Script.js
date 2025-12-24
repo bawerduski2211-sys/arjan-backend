@@ -1,11 +1,14 @@
 async function askAI() {
-    const userInputField = document.getElementById('user-input'); // دڵنیابە ئەڤ ئایدییە د HTML دا یا هەی
+    const userInputField = document.getElementById('user-input');
     const responseDiv = document.getElementById('response-area');
     const userInput = userInputField.value.trim();
 
-    if (!userInput) return;
+    if (!userInput) {
+        alert("تکایە تشتەکێ بنڤێسە");
+        return;
+    }
 
-    responseDiv.innerText = "لێگەڕیان...";
+    responseDiv.innerText = "لێگەڕیان و بەرسڤدان...";
 
     try {
         const res = await fetch('/api/chat', {
@@ -15,9 +18,14 @@ async function askAI() {
         });
 
         const data = await res.json();
-        responseDiv.innerText = data.text || "ببورە، بەرسڤ نەهات.";
-        userInputField.value = ""; 
+        
+        if (data.text) {
+            responseDiv.innerText = data.text;
+            userInputField.value = ""; 
+        } else {
+            responseDiv.innerText = "خەلەتی: " + (data.error || "بەرسڤ نەهات");
+        }
     } catch (error) {
-        responseDiv.innerText = "خەلەتیەک هەبوو د پەیوەندیێ دا.";
+        responseDiv.innerText = "ببورە، پەیوەندی ب سێرڤەری نەکەت.";
     }
 }
