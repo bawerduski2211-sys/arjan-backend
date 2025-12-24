@@ -1,8 +1,7 @@
-// فایلێ: Premium.Script.js
-
 async function askAI() {
-    const userInput = document.getElementById('user-input').value; 
-    const responseDiv = document.getElementById('response-area');
+    const userInputField = document.getElementById('user-input');
+    const responseDiv = document.getElementById('response-area'); // دڵنیابە ئەڤ ئایدییە د HTML دا هەیە
+    const userInput = userInputField.value;
 
     if (!userInput) {
         alert("تکایە تشتەکێ بنڤێسە");
@@ -22,6 +21,7 @@ async function askAI() {
         
         if (data.text) {
             responseDiv.innerText = data.text;
+            userInputField.value = ""; // پاککرنا خانکا نڤیسینێ
         } else {
             responseDiv.innerText = "خەلەتیەک هەبوو: " + (data.error || "نەدیار");
         }
