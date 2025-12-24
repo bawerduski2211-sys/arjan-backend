@@ -12,6 +12,7 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY 
 });
 
+// 2. رێکا سەرەکی یا چاتێ (ئاخفتن دگەل پڕۆفیسۆر ئارجان)
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
 
@@ -20,32 +21,38 @@ app.post('/api/chat', async (req, res) => {
     }
 
     try {
-        // 2. بکارئینانا مۆدێلێ Llama یێ ب هێز
         const completion = await groq.chat.completions.create({
             messages: [
                 {
                     role: "system",
-                    content: "تۆ پڕۆفیسۆر ئارجانی (Arjan AI). زانایەکی زۆر ژیر و شارەزای لە هەموو بوارەکانی زانست و تەکنەلۆژیا. بە بادینییەکی ڕەسەن و زانستی وەڵام بدەرەوە."
+                    content: `تۆ پڕۆفیسۆر ئارجانی، خەڵکی دهۆکی. زۆر بە کورتی و تەنها بە یەک ڕستە وەڵام بدەوە. 
+                    یاسایێن توند: ١. تەنها ب بادینی باخڤە. ٢. ب چ ڕەنگەکی سۆرانی بەکارنەهێنە. ٣. بەرسڤێن درێژ و بێزارکەر نەدە.`
                 },
                 {
                     role: "user",
                     content: message
                 }
             ],
-            model: process.env.MODEL_NAME || "llama-3.3-70b-versatile",
+            model: "llama-3.3-70b-specdec", // مۆدێلێ خێرایێ Llama
+            temperature: 0.1, // کێم کر بۆ هندێ بەرسڤ جێگیر و کورت بن
+            max_tokens: 100 // سنوردار کر دا بەرسڤێن درێژ نەدەت
         });
 
-        const text = completion.choices[0].message.content;
-        res.json({ reply: text });
+        res.json({ reply: completion.choices[0].message.content });
 
     } catch (error) {
         console.error("Error Detail:", error);
-        res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە تووشی کێشەیەکێ بوو. دڵنیا ببە کلیلێ تە یێ Groq درستە." });
+        res.status(500).json({ reply: "ببوورە برا، مێشکێ من نوکە یێ مژوولە." });
     }
 });
 
+// 3. پشکنینا کارکرنا سێرڤەری
 app.get('/', (req, res) => {
-    res.send("Arjan AI Server (Llama Edition) is Running!");
+    res.send("Arjan AI System (Llama Mode) is Running Successfully!");
 });
 
-module.exports = app;
+// 4. هه‌لکرنا سێرڤەری ل سەر پۆرتا Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is online at port ${PORT}`);
+});
