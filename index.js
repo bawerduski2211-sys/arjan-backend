@@ -5,7 +5,6 @@ require('dotenv').config();
 
 const app = express();
 
-// رێكپێدان ب هەمی ناونیشانان (CORS)
 app.use(cors());
 app.use(express.json());
 
@@ -27,19 +26,23 @@ app.post('/api/chat', async (req, res) => {
             },
             body: JSON.stringify({
                 "model": "google/gemini-2.0-flash-exp:free",
-                "messages": [{ "role": "user", "content": prompt }]
+                "messages": [
+                    { "role": "system", "content": "تو پڕۆفیسۆر ئارجانی، شارەزایێ Cyber Security، ب زمانێ کوردی بادینی بەرسڤێ بدە." },
+                    { "role": "user", "content": prompt }
+                ]
             })
         });
 
         const data = await response.json();
         if (data.choices && data.choices[0]) {
-            res.json({ text: data.choices[0].message.content });
+            // من لێرە کرە 'reply' دا دگەل سکریپتێ تە یێ فۆنتێندێ بگونجیت
+            res.json({ reply: data.choices[0].message.content });
         } else {
-            res.status(500).json({ error: "بەرسڤ نەهات، دبیت کووتا ب دوماهی هاتبیت" });
+            res.status(500).json({ error: "بەرسڤ ژ OpenRouter نەهات" });
         }
     } catch (error) {
-        res.status(500).json({ error: "کێشەیەک د سێرڤەری دا هەیە" });
+        res.status(500).json({ error: "کێشەیەک د سێرڤەرێ ئارجان دا هەیە" });
     }
 });
 
-module.exports = app; 
+module.exports = app;
