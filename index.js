@@ -4,13 +4,13 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+
+// رێكپێدان ب هەمی ناونیشانان (CORS)
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
 
 app.post('/api/chat', async (req, res) => {
     const { prompt } = req.body;
-    // ئەڤە ئەو دێڕە بوو کو خەلەتی تێدا هەبوو، نوکە یا دروستە
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!prompt) return res.status(400).json({ error: "تکایە پرسیار بنێرە" });
@@ -22,7 +22,7 @@ app.post('/api/chat', async (req, res) => {
             headers: {
                 "Authorization": `Bearer ${apiKey}`,
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://arjan-ai.vercel.app",
+                "HTTP-Referer": "https://arjan-ai.vercel.app", 
                 "X-Title": "Arjan AI"
             },
             body: JSON.stringify({
@@ -35,12 +35,11 @@ app.post('/api/chat', async (req, res) => {
         if (data.choices && data.choices[0]) {
             res.json({ text: data.choices[0].message.content });
         } else {
-            res.status(500).json({ error: "بەرسڤ ژ AI نەهات" });
+            res.status(500).json({ error: "بەرسڤ نەهات، دبیت کووتا ب دوماهی هاتبیت" });
         }
     } catch (error) {
         res.status(500).json({ error: "کێشەیەک د سێرڤەری دا هەیە" });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app; 
