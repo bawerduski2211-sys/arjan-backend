@@ -3,10 +3,12 @@ services:
     name: arjan-backend
     env: node
     plan: free
+    # فەرمانا دانانا لایبرەرییان
     buildCommand: npm install
-    startCommand: node index.js
+    # فەرمانا کارپێکرنێ (ژبەر کو تە package.json گوهۆڕی بۆ api/index.js)
+    startCommand: node api/index.js
     envVars:
       - key: OPENROUTER_API_KEY
-        sync: false
+        sync: false # ل ڤێرە کلیلێ خۆ د ناڤ دێشبۆردێ Render دا زێدە بکە
       - key: NODE_VERSION
         value: 20.x
