@@ -1,34 +1,44 @@
-require('dotenv').config(); // بۆ خاندنا کلیلان ژ فایلێ .env
 const express = require('express');
-const fetch = require('node-fetch'); // دڵنیابە د package.json دا هەیە
+const fetch = require('node-fetch');
+const cors = require('cors'); // بۆ چارەسەرکرنا کێشەیا گەهشتنێ
+require('dotenv').config();
+
 const app = express();
-const path = require('path');
 
+// ڕێکخستنێن سەرەکی
+app.use(cors()); // ڕێگەدان ب هەمی پەیوەندیان
 app.use(express.json());
-
-// نیشاندانا فایلێن ستاتیک (HTML, CSS, JS) ژ فۆڵدەرێ سەرەکی
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // نیشاندانا فایلێن HTML د هەمان فۆڵدەر دا
 
 // API Endpoint بۆ چاتێ
 app.post('/api/chat', async (req, res) => {
     const { prompt } = req.body;
     const apiKey = process.env.OPENROUTER_API_KEY;
-    const baseUrl = "https://openrouter.ai/api/v1/chat/completions";
 
+    // پشکنینا هەبوونا پرسیارێ
     if (!prompt) {
         return res.status(400).json({ error: "تکایە پرسیارەکێ بنێرە" });
     }
 
+    // پشکنینا کلیلێ API
+    if (!apiKey) {
+        return res.status(500).json({ error: "کلیلێ API نەهاتییە دیتن د سێرڤەری دا" });
+    }
+
     try {
-        const response = await fetch(baseUrl, {
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://arjan-ai.vercel.app", // ناڤێ سایتێ تە
+                "X-Title": "Arjan AI"
             },
             body: JSON.stringify({
                 "model": "google/gemini-2.0-flash-exp:free",
-                "messages": [{ "role": "user", "content": prompt }]
+                "messages": [
+                    { "role": "user", "content": prompt }
+                ]
             })
         });
 
@@ -37,13 +47,14 @@ app.post('/api/chat', async (req, res) => {
         if (data.choices && data.choices[0]) {
             res.json({ text: data.choices[0].message.content });
         } else {
-            res.status(500).json({ error: "بەرسڤ ژ AI نەهات" });
+            console.error("OpenRouter Error:", data);
+            res.status(500).json({ error: "بەرسڤ ژ AI نەهات، دڵنیابە کلیلێ تە کار دکەت" });
         }
     } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({ error: "کێشەیەک د سێرڤەری دا هەیە" });
+        console.error("Server Error:", error);
+        res.status(500).json({ error: "کێشەیەک د سێرڤەرێ ناوخۆ دا هەیە" });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`سێرڤەر یێ کار دکەت ل سەر پۆرتی ${PORT}`));
