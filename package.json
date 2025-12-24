@@ -1,15 +1,6 @@
 {
-  "name": "arjan-backend",
-  "version": "1.0.0",
-  "description": "AI Brain for Arjan AI Project",
-  "main": "api/chat.js",
-  "engines": {
-    "node": "20.x"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "node-fetch": "^2.6.7"
-  }
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/chat", "destination": "/api/chat.js" }
+  ]
 }
