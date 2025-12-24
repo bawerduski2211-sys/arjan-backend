@@ -8,7 +8,7 @@ async function askAI() {
         return;
     }
 
-    responseDiv.innerText = "لێگەڕیان و بەرسڤدان...";
+    responseDiv.innerText = "پڕۆفیسۆر ئارجان یێ هزر دکەت...";
 
     try {
         const res = await fetch('/api/chat', {
@@ -18,9 +18,10 @@ async function askAI() {
         });
 
         const data = await res.json();
-        
-        if (data.text) {
-            responseDiv.innerText = data.text;
+
+        // ل ڤێرە مە 'data.text' گوهۆڕی بۆ 'data.reply' دا دگەل باکێندی بگونجیت
+        if (data.reply) {
+            responseDiv.innerText = data.reply;
             userInputField.value = ""; 
         } else {
             responseDiv.innerText = "خەلەتی: " + (data.error || "بەرسڤ نەهات");
