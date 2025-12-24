@@ -1,12 +1,12 @@
 services:
   - type: web
-    name: arjan-ai-server-backend
+    name: arjan-backend
     env: node
-    buildCommand: npm install
-    startCommand: node api/chat.js
     plan: free
+    buildCommand: npm install
+    startCommand: node index.js
     envVars:
-      - key: GROQ_API_KEY
+      - key: OPENROUTER_API_KEY
         sync: false
-      - key: MODEL_NAME
-        sync: false
+      - key: NODE_VERSION
+        value: 20.x
